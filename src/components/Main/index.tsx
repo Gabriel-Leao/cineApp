@@ -1,31 +1,39 @@
-import Image from 'next/image'
-import data from '../../articles.json'
+import { API_BASE, API_KEY } from '@/services/api'
+import { Production } from '@/@types'
+import ProductionCard from '@/components/ProductionCard'
 
-const Main = () => {
+const getProductions = async () => {
+  const req = await fetch(
+    `${API_BASE}movie/top_rated&language=pt-BR&api_key=${API_KEY}`
+  )
+  const data = await req.json()
+
+  return data.results
+}
+
+const Home = async () => {
+  const productions = await getProductions()
   return (
-    <div>
-      <input
-        type="text"
-        id="search"
-        placeholder="Procurar aqui"
-      />
-      {data.map((article, key) => (
-        <div
-          className=""
-          key={key}>
-          <h1>{article.title}</h1>
-          {article.image && (
-            <Image
-              src={article.image}
-              alt={article.title}
-              width={300}
-              height={300}
-            />
-          )}
-        </div>
-      ))}
+    <div className="container mx-auto py-8">
+      {productions.length > 0 ? (
+        <>
+          <h2 className="text-2xl lg:text-4xl font-bold mb-8 text-center">
+            Produções
+          </h2>
+          <div className="sm:grid lg:grid-cols-3 sm:grid-cols-2">
+            {productions.map((production: Production) => (
+              <ProductionCard
+                production={production}
+                key={production.id}
+              />
+            ))}
+          </div>
+        </>
+      ) : (
+        <p>Carregando...</p>
+      )}
     </div>
   )
 }
 
-export default Main
+export default Home

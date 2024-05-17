@@ -4,3 +4,7 @@ export interface Production {
   poster_path: string
   title: string
 }
+
+export interface ProductionCardProps {
+  production: Production
+}
